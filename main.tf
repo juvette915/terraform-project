@@ -3,21 +3,15 @@ provider "aws" {
     region = "us-east-1"
 }
 
-variable "vpc_cidr_block" {
-  description = "vpc cidr block"
-  
-}
+variable vpc_cidr_block {}
+variable subnet_cidr_block {}
+variable env_prefix {}
 
-variable "subnet_cidr_block" {
-  description = "subnet cidr block"
-  
-}
 #define the vpc for our resources
 resource "aws_vpc" "development-vpc" {
   cidr_block = var.vpc_cidr_block
   tags = {
-    name: "dev-vpc",
-    vpc_env: "dev"
+    name: "${var.env_prefix}-vpc"
   }
 }
 # define a subnet for our vpc
@@ -26,6 +20,6 @@ resource "aws_subnet" "dev-subnet" {
     cidr_block = var.subnet_cidr_block
     availability_zone = "us-east-1a" 
     tags = {
-      name: "dev-1-subnet"
+      name: "${var.env_prefix}-subnet"
     }
 }
