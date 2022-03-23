@@ -6,6 +6,7 @@ provider "aws" {
 variable vpc_cidr_block {}
 variable subnet_cidr_block {}
 variable env_prefix {}
+variable avail_zone {}
 
 #define the vpc for our resources
 resource "aws_vpc" "development-vpc" {
@@ -18,7 +19,7 @@ resource "aws_vpc" "development-vpc" {
 resource "aws_subnet" "dev-subnet" {
     vpc_id = aws_vpc.development-vpc.id
     cidr_block = var.subnet_cidr_block
-    availability_zone = "us-east-1a" 
+    availability_zone = var.avail_zone
     tags = {
       name: "${var.env_prefix}-subnet"
     }
