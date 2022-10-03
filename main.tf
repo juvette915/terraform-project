@@ -12,6 +12,7 @@ variable avail_zone {}
 variable my_ip {}
 variable instance_type {}
 variable public_key_location {}
+variable private_key_location {}
 
 
 #define the vpc for our resources
@@ -107,13 +108,7 @@ resource "aws_instance" "dev-server-1" {
   associate_public_ip_address = true
   key_name = aws_key_pair.ssh-key.key_name 
 
-  user_data = <<EOF
-                  #!/bin/bash
-                  sudo yum update -y && sudo yum install -y docker
-                  sudo systemctl start docker
-                  sudo usermod -aG docker ec2-user
-                  docker run -p 8080:80 nginx
-              EOF
+  #user_data = file("entry-script.sh")
 
   tags = {
     Name: "${var.env_prefix}-dev-server"
@@ -128,3 +123,28 @@ resource "aws_key_pair" "ssh-key" {
   public_key = "${file(var.public_key_location)}"
   
 }
+
+/* connection {
+    type = "ssh"
+    host = self.public_ip
+    user = "ec2-user"
+    private_key = file(var.private_key_location)
+}
+
+provisioner "remote-exec" {
+    inline = [
+        "export ENV=dev",
+        "mkdir newdir"
+    ]
+}
+
+provisioner "file" {
+    source = "entry-script.sh"
+    destination = "/home/ec2-user/entry-script.sh"
+
+}
+
+provisioner "remote-exec" {
+     script = file("entry-script.sh")
+
+} */
